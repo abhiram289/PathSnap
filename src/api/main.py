@@ -65,6 +65,34 @@ def load_assets():
     MODEL_ASSETS['decoder'] = HMMRouteDecoder(sigma_z=10.0, beta=15.0)
     logger.info("HMM & Viterbi Decoder initialized successfully.")
 
+def find_trip_dir(trip_id: str):
+    candidates = [
+        os.path.join("Student folder", "student_test", trip_id),
+        os.path.join("Student folder", "train", trip_id),
+        os.path.join("..", "Student folder", "student_test", trip_id),
+        os.path.join("..", "Student folder", "train", trip_id),
+        os.path.join(os.path.dirname(__file__), "..", "..", "Student folder", "student_test", trip_id),
+        os.path.join(os.path.dirname(__file__), "..", "..", "Student folder", "train", trip_id),
+        os.path.join(r"E:\Engg Sem 5\ML\Student folder", "student_test", trip_id),
+        os.path.join(r"E:\Engg Sem 5\ML\Student folder", "train", trip_id),
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
+
+def find_student_test_dir():
+    candidates = [
+        os.path.join("Student folder", "student_test"),
+        os.path.join("..", "Student folder", "student_test"),
+        os.path.join(os.path.dirname(__file__), "..", "..", "Student folder", "student_test"),
+        r"E:\Engg Sem 5\ML\Student folder\student_test",
+    ]
+    for c in candidates:
+        if os.path.exists(c):
+            return c
+    return None
+
 @app.get("/")
 def root():
     return {"status": "online", "message": "PathSnap Route Reconstruction API"}
@@ -72,8 +100,8 @@ def root():
 @app.get("/trips")
 def list_available_trips():
     """Lists the evaluation trips available on the server."""
-    test_dir = os.path.join("Student folder", "student_test")
-    if os.path.exists(test_dir):
+    test_dir = find_student_test_dir()
+    if test_dir and os.path.exists(test_dir):
         trips = [d for d in sorted(os.listdir(test_dir)) if os.path.isdir(os.path.join(test_dir, d))]
     else:
         trips = []
@@ -85,11 +113,9 @@ def evaluate_trip(req: TripEvaluationRequest):
     trip_id = req.trip_id
     logger.info(f"Incoming evaluation request received for Trip ID: {trip_id}")
     
-    trip_dir = os.path.join("Student folder", "student_test", trip_id)
-    if not os.path.exists(trip_dir):
-        trip_dir = os.path.join("Student folder", "train", trip_id)
-        if not os.path.exists(trip_dir):
-            raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found on server.")
+    trip_dir = find_trip_dir(trip_id)
+    if trip_dir is None:
+        raise HTTPException(status_code=404, detail=f"Trip {trip_id} not found on server.")
             
     df_trip = process_single_trip(trip_dir, trip_id, k_query=80, top_k=10, is_training=False)
     if df_trip.empty:
