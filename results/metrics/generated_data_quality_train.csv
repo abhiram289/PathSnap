@@ -1,0 +1,3 @@
+Partition,Measure,Total,Trips
+train,Missing GPS points,0,80
+train,Invalid coordinates,0,80

@@ -1,0 +1,3 @@
+Metric,Classifier,HMM + Viterbi
+Top-1 Accuracy (%),80.439,84.36200000000001
+Route Continuity (%),92.846,99.30799999999999

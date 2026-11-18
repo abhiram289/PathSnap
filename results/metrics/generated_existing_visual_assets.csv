@@ -1,0 +1,8 @@
+Type,Path
+Folium HTML map,results\maps\interactive_map_trip_00000000_test.html
+Folium HTML map,results\maps\interactive_map_trip_00000001.html
+PNG figure,results\figures\bayesian_opt_history.png
+PNG figure,results\figures\confusion_matrices.png
+PNG figure,results\figures\eda_sampling_intervals.png
+PNG figure,results\figures\eda_trip_lengths_and_points.png
+PNG figure,results\figures\model_comparison_metrics.png

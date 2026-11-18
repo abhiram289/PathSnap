@@ -1,0 +1,2 @@
+number,value,datetime_start,datetime_complete,duration,params_colsample_bytree,params_learning_rate,params_max_depth,params_min_child_samples,params_n_estimators,params_num_leaves,params_subsample,system_attrs_tpe:relative_params:0,state
+4,0.8253633977914626,2026-11-18 11:22:11.642220,2026-11-18 11:22:17.349144,0 days 00:00:05.706924,0.9862528132298237,0.0327636407868471,5,25,140,44,0.9795542149013333,,COMPLETE
