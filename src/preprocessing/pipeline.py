@@ -37,6 +37,36 @@ def angle_difference(a1, a2):
     diff = (a1 - a2 + np.pi) % (2 * np.pi) - np.pi
     return np.abs(diff)
 
+
+
+def validate_gps_track(track):
+    """Validate GPS coordinates and remove invalid observations."""
+    required = {"lon", "lat", "time"}
+
+    missing = required - set(track.columns)
+    if missing:
+        raise ValueError(f"Missing required GPS columns: {missing}")
+
+    track = track.copy()
+
+    for col in required:
+        track[col] = pd.to_numeric(track[col], errors="coerce")
+
+    track = track.dropna(subset=["lon", "lat", "time"])
+
+    valid = (
+        track["lon"].between(-180, 180) &
+        track["lat"].between(-90, 90)
+    )
+
+    track = track.loc[valid].reset_index(drop=True)
+
+    if track.empty:
+        raise ValueError("No valid GPS observations found.")
+
+    return track
+
+
 def process_single_trip(trip_dir, trip_id, k_query=80, top_k=10, is_training=True):
     track_path = os.path.join(trip_dir, f"{trip_id}.track")
     nodes_path = os.path.join(trip_dir, f"{trip_id}.nodes")
@@ -44,6 +74,7 @@ def process_single_trip(trip_dir, trip_id, k_query=80, top_k=10, is_training=Tru
     route_path = os.path.join(trip_dir, f"{trip_id}.route")
     
     track = pd.read_csv(track_path, sep=r'\s+', header=None, names=['lon', 'lat', 'time'])
+    track = validate_gps_track(track)
     nodes = pd.read_csv(nodes_path, sep=r'\s+', header=None, names=['lon', 'lat'])
     arcs = pd.read_csv(arcs_path, sep=r'\s+', header=None, names=['u', 'v'])
     
