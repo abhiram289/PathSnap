@@ -1,0 +1,28 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints
+
+# IDEs
+.vscode/
+.idea/
+
+# Large raw datasets and uncompressed features
+# Student folder contains raw input files tested on evaluator machine
+Student folder/
+data/*.csv
+data/*.csv.gz
+
+# Keep high-performance compressed parquet features (<30MB)
+!data/train_features.parquet
+!data/test_features.parquet

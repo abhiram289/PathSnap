@@ -1,0 +1,3 @@
+Version,Student-Test Macro F1,Top-1 Accuracy,Log Loss,Inference Time (ms/1k)
+Untuned LightGBM,0.8738,75.53%,0.1236,0.12
+Bayesian Tuned LightGBM,0.8769,76.20%,0.1042,2.49

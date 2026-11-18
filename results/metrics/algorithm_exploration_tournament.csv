@@ -1,0 +1,11 @@
+Algorithm,Family,Fit Time (s),Inference (ms/1k),Student-Test Macro F1,Observation Top-1 Acc,Log Loss
+Gaussian Naive Bayes,Linear and probabilistic,0.06,0.0,0.7252,75.23%,0.9532
+SGD Classifier (Log loss),Linear and probabilistic,0.61,0.95,0.8086,74.56%,0.1328
+Logistic Regression,Linear and probabilistic,0.53,1.17,0.8659,75.13%,0.1272
+Decision Tree,Tree-based,1.13,0.0,0.8623,73.06%,0.2845
+Extra Trees,Ensemble / Bagging,0.54,5.5,0.8782,75.62%,0.1187
+Random Forest,Ensemble / Bagging,1.52,11.35,0.8743,75.84%,0.1071
+AdaBoost,Boosting,9.62,21.59,0.873,74.28%,0.3968
+LightGBM,Boosting,0.4,1.1,0.8734,75.98%,0.1051
+Distance-Weighted KNN,Instance-based,0.05,66.2,0.85,73.00%,0.2946
+Multi-Layer Perceptron,Neural networks,26.49,0.95,0.8726,76.06%,0.1066

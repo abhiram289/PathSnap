@@ -1,0 +1,3 @@
+Partition,Trip Count,Total GPS Points,Mean Points/Trip,Min Points/Trip,Max Points/Trip,Total Traversed Arcs,Avg Duration (s),Total Missing Values,Total Invalid Coords
+Training,80,208417,2605.2125,361,19313,31336,5680.404487500001,0,0
+Student Testing,10,19160,1916.0,262,3958,3477,2025.0,0,0
