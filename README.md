@@ -49,6 +49,10 @@ PathSnap/
 │       ├── multi_layer_perceptron_mlp.joblib # Neural network architecture
 │       └── best_tuned_model.joblib     # Bayesian-tuned LightGBM champion model
 ├── src/
+│   ├── api/
+│   │   └── main.py                     # FastAPI backend & distributed inference server
+│   ├── ui/
+│   │   └── app.py                      # Evaluator Streamlit interface with Folium maps
 │   ├── eda/
 │   │   └── explore.py                  # Exploratory Data Analysis & Folium map generator
 │   ├── preprocessing/
@@ -171,3 +175,35 @@ Performs 3-fold GroupKFold cross-validation, saves diagnostic plots, confusion m
 python src/models/bayesian_optimization.py
 ```
 Executes Optuna TPE search and saves the tuned champion model.
+
+### 6. Run HMM & Viterbi Sequence Reconstruction Benchmark
+```bash
+python src/hmm/decoder.py
+```
+Evaluates classifier-only vs. HMM Viterbi route decoding and route continuity.
+
+---
+
+## 💻 Two-Laptop Distributed Deployment
+
+The system is architected for distributed evaluation across two machines connected on the same local network:
+
+### Laptop 1: Model & API Server
+Hosts the trained machine learning models, road network topologies, and the FastAPI inference engine.
+```bash
+# Start server on all interfaces
+uvicorn src.api.main:app --host 0.0.0.0 --port 8000
+```
+* Interactive API Documentation: `http://localhost:8000/docs`
+* Trip Inventory Endpoint: `GET http://localhost:8000/trips`
+* Inference & Evaluation Endpoint: `POST http://localhost:8000/evaluate`
+
+### Laptop 2: Evaluator User Interface
+Provides the evaluator dashboard for selecting any of the 10 reserved student-testing trips, requesting live inference from Laptop 1, and rendering interactive trajectory maps.
+```bash
+# Start Streamlit evaluator client
+streamlit run src/ui/app.py
+```
+* Enter Laptop 1's local IP address (e.g., `http://192.168.1.50:8000`) in the sidebar.
+* Select any reserved trip (`00000000`, `00000007`, ..., `00000091`).
+* Click **Reconstruct & Evaluate Route** to inspect real-time accuracy, continuity, and interactive Folium trajectory overlays.
