@@ -30,6 +30,7 @@ PathSnap/
 │   │   ├── train_models.py             # 5-family training & GroupKFold evaluation
 │   │   └── bayesian_optimization.py    # Optuna TPE tuning
 │   └── hmm/decoder.py                  # HMM transitions & Viterbi decoding
+|__ generate_all_graphs.py                 
 ├── requirements.txt
 └── README.md
 ```
