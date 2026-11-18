@@ -20,6 +20,8 @@ ENV/
 # Large raw datasets and uncompressed features
 # Student folder contains raw input files tested on evaluator machine
 Student folder/
+evaluator_test/
+*.zip
 data/*.csv
 data/*.csv.gz
 

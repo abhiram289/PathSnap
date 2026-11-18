@@ -67,10 +67,15 @@ def load_assets():
 
 def find_trip_dir(trip_id: str):
     candidates = [
+        os.path.join("evaluator_test", trip_id),
+        os.path.join("..", "evaluator_test", trip_id),
+        os.path.join(r"E:\Engg Sem 5\ML\evaluator_test", trip_id),
+        os.path.join("Student folder", "evaluator_test", trip_id),
         os.path.join("Student folder", "student_test", trip_id),
         os.path.join("Student folder", "train", trip_id),
         os.path.join("..", "Student folder", "student_test", trip_id),
         os.path.join("..", "Student folder", "train", trip_id),
+        os.path.join(os.path.dirname(__file__), "..", "..", "evaluator_test", trip_id),
         os.path.join(os.path.dirname(__file__), "..", "..", "Student folder", "student_test", trip_id),
         os.path.join(os.path.dirname(__file__), "..", "..", "Student folder", "train", trip_id),
         os.path.join(r"E:\Engg Sem 5\ML\Student folder", "student_test", trip_id),
@@ -81,17 +86,20 @@ def find_trip_dir(trip_id: str):
             return c
     return None
 
-def find_student_test_dir():
-    candidates = [
+def find_test_dirs():
+    dirs = [
+        "evaluator_test",
+        os.path.join("..", "evaluator_test"),
+        r"E:\Engg Sem 5\ML\evaluator_test",
         os.path.join("Student folder", "student_test"),
         os.path.join("..", "Student folder", "student_test"),
-        os.path.join(os.path.dirname(__file__), "..", "..", "Student folder", "student_test"),
         r"E:\Engg Sem 5\ML\Student folder\student_test",
     ]
-    for c in candidates:
-        if os.path.exists(c):
-            return c
-    return None
+    valid = []
+    for d in dirs:
+        if os.path.exists(d) and d not in valid:
+            valid.append(d)
+    return valid
 
 @app.get("/")
 def root():
@@ -100,12 +108,13 @@ def root():
 @app.get("/trips")
 def list_available_trips():
     """Lists the evaluation trips available on the server."""
-    test_dir = find_student_test_dir()
-    if test_dir and os.path.exists(test_dir):
-        trips = [d for d in sorted(os.listdir(test_dir)) if os.path.isdir(os.path.join(test_dir, d))]
-    else:
-        trips = []
-    return {"available_trips": trips}
+    trips = []
+    for test_dir in find_test_dirs():
+        if os.path.exists(test_dir):
+            for d in sorted(os.listdir(test_dir)):
+                if os.path.isdir(os.path.join(test_dir, d)) and d not in trips:
+                    trips.append(d)
+    return {"available_trips": sorted(trips)}
 
 @app.post("/evaluate", response_model=TripEvaluationResponse)
 def evaluate_trip(req: TripEvaluationRequest):
