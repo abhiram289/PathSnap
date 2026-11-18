@@ -72,7 +72,7 @@ st.sidebar.markdown("### Distributed Deployment Config")
 
 api_base_url = st.sidebar.text_input(
     "Laptop 1 (API Server) URL:",
-    value="http://localhost:8000"
+    value="http://10.8.120.126:8000"
 )
 
 # Server Health Check
