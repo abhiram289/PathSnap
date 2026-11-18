@@ -41,7 +41,30 @@ st.markdown("""
     [data-testid="stMetricDelta"] svg {
         fill: #10B981 !important;
     }
-</style>
+
+    /* Prevent page greying out / dimming during reruns */
+    .stApp[data-test-script-state="running"] [data-testid="stAppViewBlockContainer"],
+    [data-testid="stAppViewBlockContainer"] {
+        opacity: 1 !important;
+        filter: none !important;
+    }
+    
+    .map-legend {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1.8rem;
+        padding: 0.6rem 1rem;
+        background-color: #1E293B;
+        border: 1px solid #334155;
+        border-radius: 6px;
+        margin-bottom: 0.75rem;
+        font-size: 0.88rem;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 """, unsafe_allow_html=True)
 
 # ----------------- SIDEBAR -----------------
@@ -170,6 +193,24 @@ if data is not None:
     st.markdown("<br>", unsafe_allow_html=True)
     st.subheader("Interactive Trajectory & Route Reconstruction Map")
     
+    # High-contrast visual legend
+    st.markdown("""
+    <div class="map-legend">
+        <div class="legend-item">
+            <span style="color: #38BDF8; font-weight: 700; font-size: 1.1rem;">● - -</span>
+            <span><b>Raw GPS Observations:</b> Noisy sensor coordinates (Cyan dots / dashed)</span>
+        </div>
+        <div class="legend-item">
+            <span style="color: #EF4444; font-weight: 700; font-size: 1.1rem;">━━━</span>
+            <span><b>HMM Generated Route:</b> Matched topological trajectory (Vibrant Red line)</span>
+        </div>
+        <div class="legend-item">
+            <span style="color: #10B981; font-weight: 700; font-size: 1.1rem;">━━━</span>
+            <span><b>Ground Truth Reference:</b> Actual vehicle road path (Emerald Green)</span>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+    
     gps_coords = data.get("gps_path", [])
     recon_coords = data.get("reconstructed_path", [])
     gt_coords = data.get("ground_truth_path", None)
@@ -178,49 +219,58 @@ if data is not None:
         center_lat = sum(p[0] for p in gps_coords) / len(gps_coords)
         center_lon = sum(p[1] for p in gps_coords) / len(gps_coords)
         
+        # Free OpenStreetMap tiles without API key restrictions or watermarks
         m = folium.Map(
             location=[center_lat, center_lon],
             zoom_start=14,
-            tiles="CartoDB voyager"
+            tiles="OpenStreetMap"
         )
         
-        # Ground Truth Route (green)
-        if gt_coords:
-            gt_group = folium.FeatureGroup(name="Ground Truth Route (Reference)", show=True)
-            folium.PolyLine(
-                gt_coords,
-                color="#22C55E",
-                weight=6,
-                opacity=0.85,
-                tooltip="Ground Truth Route (Actual Path)"
-            ).add_to(gt_group)
-            gt_group.add_to(m)
-            
-        # HMM Reconstructed Trajectory (purple/coral)
-        if recon_coords:
-            recon_group = folium.FeatureGroup(name="HMM Reconstructed Route", show=True)
-            folium.PolyLine(
-                recon_coords,
-                color="#8B5CF6",
-                weight=4,
-                opacity=0.9,
-                tooltip="HMM + Viterbi Reconstructed Path"
-            ).add_to(recon_group)
-            recon_group.add_to(m)
-            
-        # Raw GPS Observations (blue markers)
-        gps_group = folium.FeatureGroup(name="Raw GPS Observations", show=True)
+        # Layer 1 (Bottom): Raw GPS Observations (Cyan dashed path + subtle dots)
+        gps_group = folium.FeatureGroup(name="Raw GPS Observations (Cyan)", show=True)
+        folium.PolyLine(
+            gps_coords,
+            color="#0284C7",
+            weight=2,
+            opacity=0.6,
+            dash_array="5, 5",
+            tooltip="Raw GPS Observation Sequence"
+        ).add_to(gps_group)
         for pt in gps_coords:
             folium.CircleMarker(
                 location=pt,
-                radius=3,
-                color="#2563EB",
+                radius=2.5,
+                color="#0284C7",
                 fill=True,
-                fill_color="#3B82F6",
-                fill_opacity=0.7,
+                fill_color="#38BDF8",
+                fill_opacity=0.5,
                 tooltip="Noisy GPS observation"
             ).add_to(gps_group)
         gps_group.add_to(m)
+
+        # Layer 2 (Middle): Ground Truth Route (Emerald green)
+        if gt_coords:
+            gt_group = folium.FeatureGroup(name="Ground Truth Route (Green)", show=True)
+            folium.PolyLine(
+                gt_coords,
+                color="#10B981",
+                weight=6,
+                opacity=0.85,
+                tooltip="Ground Truth Route (Surveyed Road Network)"
+            ).add_to(gt_group)
+            gt_group.add_to(m)
+            
+        # Layer 3 (TOP): HMM Reconstructed Trajectory (Vibrant Red/Coral on top)
+        if recon_coords:
+            recon_group = folium.FeatureGroup(name="HMM Reconstructed Route (Red)", show=True)
+            folium.PolyLine(
+                recon_coords,
+                color="#EF4444",
+                weight=4.5,
+                opacity=0.95,
+                tooltip="HMM + Viterbi Reconstructed Route"
+            ).add_to(recon_group)
+            recon_group.add_to(m)
         
         # Start and End Markers
         folium.Marker(
