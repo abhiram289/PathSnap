@@ -1,86 +1,113 @@
-\# PathSnap – Project Overview
+# PathSnap – Project Overview
 
+## 1. Introduction
 
+PathSnap is a machine learning-based map-matching and trajectory reconstruction system developed for the PES University Machine Learning Hackathon (UE24CS352A).
 
-\## 1. Introduction
+The project aims to match noisy GPS observations to the correct road segments and reconstruct vehicle routes using spatial processing, machine learning classification and Hidden Markov Model (HMM) sequence decoding.
 
+## 2. Problem Statement
 
+GPS devices frequently produce noisy location observations. A GPS coordinate may not lie exactly on the road being travelled because of measurement errors, signal interference and environmental conditions.
 
-PathSnap is a machine learning-based project focused on analyzing trip data and generating useful insights for route and travel-related predictions.
+Map matching addresses this problem by identifying the most likely road segment corresponding to each GPS observation.
 
+PathSnap combines spatial candidate generation and machine learning to improve the identification of road segments and reconstruct continuous routes.
 
+## 3. Project Objectives
 
-\## 2. Project Objectives
+- Analyse GPS trajectory and road network datasets.
+- Perform exploratory data analysis.
+- Generate candidate road segments for GPS observations.
+- Extract spatial and movement-related features.
+- Train and compare multiple machine learning algorithms.
+- Optimize model hyperparameters using Bayesian optimization.
+- Apply HMM and Viterbi decoding for sequential route reconstruction.
+- Provide route evaluation through an API and interactive interface.
 
+## 4. Major Features
 
+### 4.1 Exploratory Data Analysis
 
-\- Explore and understand trip datasets.
+Analyses GPS sampling intervals, trip lengths, route characteristics, missing values and coordinate validity.
 
-\- Perform Exploratory Data Analysis (EDA).
+### 4.2 Spatial Candidate Generation
 
-\- Apply feature engineering and preprocessing.
+Uses a KD-tree to efficiently identify nearby road segment candidates for each GPS observation.
 
-\- Train and evaluate multiple machine learning models.
+### 4.3 Feature Engineering
 
-\- Optimize model hyperparameters.
+Extracts distance, segment geometry, heading, GPS speed and time-related features.
 
-\- Provide prediction functionality through an API and user interface.
+### 4.4 Machine Learning
 
+Compares five algorithm families:
 
+- Logistic Regression
+- Distance-Weighted K-Nearest Neighbours
+- Random Forest
+- LightGBM
+- Multi-Layer Perceptron
 
-\## 3. Project Workflow
+### 4.5 Bayesian Optimization
 
+Uses Optuna to optimize LightGBM hyperparameters.
 
+### 4.6 Sequential Route Reconstruction
 
-1\. Dataset collection and loading.
+Uses Hidden Markov Model concepts and Viterbi decoding to identify a more continuous sequence of road segments.
 
-2\. Data cleaning and preprocessing.
+### 4.7 Interactive Visualization
 
-3\. Exploratory Data Analysis.
+Uses Folium maps and a Streamlit interface to display GPS trajectories and reconstructed routes.
 
-4\. Feature engineering.
+## 5. Technology Stack
 
-5\. Model training.
+| Technology | Purpose |
+|---|---|
+| Python | Main programming language |
+| Pandas | Data manipulation |
+| NumPy | Numerical computation |
+| Scikit-learn | Machine learning |
+| LightGBM | Gradient boosting |
+| Optuna | Hyperparameter optimization |
+| SciPy | KD-tree spatial search |
+| NetworkX | Graph-related analysis |
+| Matplotlib | Data visualization |
+| Folium | Interactive maps |
+| FastAPI | Backend API |
+| Streamlit | User interface |
+| Joblib | Model serialization |
 
-6\. Hyperparameter optimization.
+## 6. Project Workflow
 
-7\. Model evaluation and comparison.
+1. Load GPS trajectory and road network data.
+2. Perform exploratory data analysis.
+3. Project geographic coordinates into metric coordinates.
+4. Generate nearby road segment candidates using KD-tree.
+5. Extract candidate-level features.
+6. Train multiple classification models.
+7. Evaluate models using cross-validation and held-out testing data.
+8. Optimize LightGBM using Optuna.
+9. Apply HMM and Viterbi route reconstruction.
+10. Serve predictions through FastAPI.
+11. Visualize results using Streamlit and Folium.
 
-8\. API integration and user interface.
+## 7. Repository Structure
 
+- `src/api/` – FastAPI application.
+- `src/eda/` – Exploratory data analysis.
+- `src/hmm/` – Sequential route decoder.
+- `src/models/` – Model training and optimization.
+- `src/preprocessing/` – Spatial preprocessing and feature extraction.
+- `src/ui/` – Streamlit interface.
+- `notebooks/` – Experimentation notebooks.
+- `data/` – Preprocessed feature datasets.
+- `results/figures/` – Generated visualizations.
+- `results/maps/` – Interactive map outputs.
+- `results/metrics/` – Evaluation metrics.
+- `results/models/` – Serialized trained models.
 
+## 8. Expected Outcome
 
-\## 4. Technologies
-
-
-
-The project repository includes Python-based machine learning components, data analysis notebooks, model artifacts, and an application interface.
-
-
-
-Refer to `requirements.txt` for the project's dependencies.
-
-
-
-\## 5. Project Structure
-
-
-
-\- `src/` – Source files.
-
-\- `notebooks/` – Data analysis and experimentation notebooks.
-
-\- `data/` – Dataset files.
-
-\- `results/` – Generated outputs and results.
-
-\- `PathSnap\_student\_materials/` – Supporting project materials.
-
-
-
-\## 6. Expected Outcome
-
-
-
-The project aims to combine data analysis, machine learning, and application integration into a unified trip analysis and prediction system.
-
+The project provides an integrated map-matching system that uses machine learning and sequential decoding to identify road segments corresponding to noisy GPS observations and reconstruct vehicle trajectories.
